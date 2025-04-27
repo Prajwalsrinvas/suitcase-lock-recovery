@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recover Your Forgotten Suitcase Combination</title>
+    <style>
+        :root {
+            /* Light Theme */
+            --accent-color: #3772ff;
+            --text-color: #333333;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --success-color: #4caf50;
+            --lock-body-color: #2d3846;
+            --lock-inner-color: #1e2835;
+            --dial-color: #1a1a1a;
+            --dial-text-color: white;
+            --button-bg-color: #e0e0e0;
+            --button-color: #333;
+            --hole-color: #000;
+            --hole-visible-color: #fff;
+            --panel-bg-color: #f5f7fa;
+            --input-border: #ddd;
+            --progress-bg: #e0e0e0;
+            --progress-fill: #3772ff;
+            --progress-text: #333;
+            --combination-color: #f0f0f0;
+            --combination-tried-color: #d3d3d3;
+            --combination-correct-color: #66bb6a;
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --accent-color: #4f83ff;
+            --text-color: #e0e0e0;
+            --background-color: #121212;
+            --card-color: #1e1e1e;
+            --success-color: #66bb6a;
+            --lock-body-color: #1a1a2e;
+            --lock-inner-color: #16213e;
+            --dial-color: #0f0f0f;
+            --dial-text-color: #f5f5f5;
+            --button-bg-color: #2a2a2a;
+            --button-color: #e0e0e0;
+            --hole-color: #000;
+            --hole-visible-color: #fff;
+            --panel-bg-color: #2c2c2c;
+            --input-border: #444;
+            --progress-bg: #333;
+            --progress-fill: #4f83ff;
+            --progress-text: #e0e0e0;
+            --combination-color: #2a2a2a;
+            --combination-tried-color: #3a3a3a;
+            --combination-correct-color: #2e7d32;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            padding: 40px 0 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 1.2rem 0 0.6rem;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .card {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .intro-card {
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .personal-story-card {
+            border-left: 4px solid #6c5ce7;
+            background-color: rgba(108, 92, 231, 0.05);
+        }
+
+        [data-theme="dark"] .personal-story-card {
+            background-color: rgba(108, 92, 231, 0.1);
+        }
+
+        .disclaimer-card {
+            border-left: 4px solid #f39c12;
+            background-color: rgba(253, 235, 208, 0.2);
+        }
+
+        [data-theme="dark"] .disclaimer-card {
+            background-color: rgba(253, 235, 208, 0.05);
+        }
+
+        .step-list {
+            counter-reset: step-counter;
+            list-style-type: none;
+        }
+
+        .step-item {
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 20px;
+        }
+
+        .step-item::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            background-color: var(--accent-color);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            background-color: var(--card-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            opacity: 0.9;
+        }
+
+        .theme-toggle-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+
+        /* Lock simulator styles */
+        .lock-simulator {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        /* Lock Container */
+        .lock-container {
+            width: 360px;
+            /* Increased width to prevent button overlap */
+            height: 220px;
+            margin: 30px auto;
+            background-color: var(--lock-body-color);
+            border-radius: 12px;
+            padding: 20px 20px 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2),
+                inset 0 2px 10px rgba(255, 255, 255, 0.1),
+                inset 0 -2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dials-container {
+            background-color: var(--lock-inner-color);
+            border-radius: 8px;
+            padding: 15px;
+            width: 320px;
+            /* Increased width to fit larger spacing */
+            display: flex;
+            justify-content: space-between;
+            transition: background-color 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .dial-unit {
+            width: 80px;
+            /* Increased width for spacing */
+            height: 70px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .dial-inner {
+            width: 60px;
+            height: 60px;
+            background-color: var(--dial-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5),
+                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .dial-number {
+            color: var(--dial-text-color);
+            font-size: 28px;
+            font-weight: bold;
+            user-select: none;
+            transition: transform 0.2s ease, color 0.3s ease;
+        }
+
+        .dial-number.changing {
+            transform: scale(1.2);
+        }
+
+        .dial-button {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background-color: var(--button-bg-color);
+            color: var(--button-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            user-select: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+            transition: transform 0.15s ease, background-color 0.3s ease, box-shadow 0.15s ease;
+            z-index: 2;
+        }
+
+        .dial-button:hover {
+            transform: translateZ(2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .dial-button:active {
+            transform: translateZ(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2),
+                inset 0 1px 1px rgba(0, 0, 0, 0.1);
+        }
+
+        .dial-button.minus {
+            left: -12px;
+            /* Adjusted positioning */
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .dial-button.plus {
+            right: -12px;
+            /* Adjusted positioning */
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .dial-button.minus:hover {
+            transform: translateY(-50%) translateZ(2px);
+        }
+
+        .dial-button.plus:hover {
+            transform: translateY(-50%) translateZ(2px);
+        }
+
+        .dial-button.minus:active,
+        .dial-button.plus:active {
+            transform: translateY(-50%) translateZ(0);
+        }
+
+        /* Hole viewer at the bottom (underside) */
+        .hole-viewer {
+            background-color: #222;
+            width: 280px;
+            height: 40px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .hole-placeholder {
+            width: 16px;
+            height: 16px;
+            background-color: #333;
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.3s;
+            box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .hole {
+            width: 16px;
+            height: 16px;
+            background-color: var(--hole-color);
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        .hole.visible {
+            opacity: 1;
+            background-color: var(--hole-visible-color);
+            box-shadow: 0 0 5px 2px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Instruction and feedback panel */
+        .instruction-panel {
+            background-color: var(--panel-bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .current-step {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .user-input-panel {
+            background-color: var(--panel-bg-color);
+            padding: 20px 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .user-input-container {
+            margin-top: 15px;
+        }
+
+        .user-input-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .custom-number-input {
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+
+        .custom-number-display {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border: 2px solid var(--input-border);
+            border-radius: 6px;
+            font-size: 24px;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        .custom-number-controls {
+            position: absolute;
+            right: -5px;
+            top: 0;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .custom-number-button {
+            width: 20px;
+            height: 20px;
+            background-color: var(--button-bg-color);
+            color: var(--button-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .custom-number-button:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .user-input-help {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #2860e0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button.secondary {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        [data-theme="dark"] button.secondary {
+            background-color: #3d3d3d;
+            color: #f0f0f0;
+        }
+
+        button.secondary:hover {
+            background-color: #d0d0d0;
+        }
+
+        [data-theme="dark"] button.secondary:hover {
+            background-color: #4d4d4d;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button:disabled:hover {
+            transform: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-message {
+            min-height: 24px;
+            margin: 20px 0;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+
+        .result-message.success {
+            color: var(--success-color);
+            font-size: 1.1rem;
+        }
+
+        /* Progress bar styles */
+        .progress-container {
+            margin: 15px 0;
+            background-color: var(--panel-bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: none;
+            /* Hide initially */
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-title {
+            font-weight: 500;
+        }
+
+        .progress-count {
+            font-weight: 500;
+            color: var(--accent-color);
+        }
+
+        .progress-bar {
+            height: 12px;
+            background-color: var(--progress-bg);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--progress-fill);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--progress-text);
+        }
+
+        /* Generated combinations styles */
+        .combinations-container {
+            margin: 20px 0;
+            background-color: var(--panel-bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+
+        .combinations-title {
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .combinations-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .combination-item {
+            background-color: var(--combination-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .combination-item.tried {
+            background-color: var(--combination-tried-color);
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .combination-item.correct {
+            background-color: var(--combination-correct-color);
+            color: white;
+        }
+
+        .toggle-input-btn {
+            margin: 15px 0;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            color: var(--accent-color);
+        }
+
+        .toggle-input-btn:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 0 20px;
+            color: #777;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        /* Visual indicator for viewing holes from underneath */
+        .view-indicator {
+            margin: 15px 0 5px;
+            font-size: 0.9rem;
+            color: #777;
+            font-style: italic;
+        }
+
+        /* Animation for unlocking */
+        @keyframes unlockShake {
+            0% {
+                transform: translateX(0);
+            }
+
+            10% {
+                transform: translateX(-5px);
+            }
+
+            20% {
+                transform: translateX(5px);
+            }
+
+            30% {
+                transform: translateX(-3px);
+            }
+
+            40% {
+                transform: translateX(3px);
+            }
+
+            50% {
+                transform: translateX(-2px);
+            }
+
+            60% {
+                transform: translateX(2px);
+            }
+
+            70% {
+                transform: translateX(-1px);
+            }
+
+            80% {
+                transform: translateX(1px);
+            }
+
+            90% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes unlockSuccess {
+            0% {
+                transform: translateY(0);
+            }
+
+            20% {
+                transform: translateY(-5px);
+            }
+
+            40% {
+                transform: translateY(0);
+            }
+
+            60% {
+                transform: translateY(-3px);
+            }
+
+            80% {
+                transform: translateY(0);
+            }
+
+            90% {
+                transform: translateY(-1px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .unlocking {
+            animation: unlockShake 0.6s ease-in-out;
+        }
+
+        .unlocked {
+            animation: unlockSuccess 0.5s ease-in-out;
+        }
+
+        /* Step indicators */
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--button-bg-color);
+            border-radius: 50%;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background-color: var(--accent-color);
+            transform: scale(1.2);
+        }
+
+        /* GitHub corner */
+        .github-corner {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .github-corner svg {
+            fill: var(--accent-color);
+            color: var(--background-color);
+            width: 80px;
+            height: 80px;
+        }
+
+        .github-corner .octo-arm {
+            transform-origin: 130px 106px;
+        }
+
+        .github-corner:hover .octo-arm {
+            animation: octocat-wave 560ms ease-in-out;
+        }
+
+        @keyframes octocat-wave {
+
+            0%,
+            100% {
+                transform: rotate(0);
+            }
+
+            20%,
+            60% {
+                transform: rotate(-25deg);
+            }
+
+            40%,
+            80% {
+                transform: rotate(10deg);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .step-item {
+                padding-left: 30px;
+            }
+
+            .lock-container {
+                width: 320px;
+            }
+
+            .dials-container {
+                width: 280px;
+            }
+
+            .hole-viewer {
+                width: 250px;
+            }
+
+            .dial-unit {
+                width: 70px;
+            }
+
+            .dial-inner {
+                width: 50px;
+                height: 50px;
+            }
+
+            .dial-number {
+                font-size: 24px;
+            }
+
+            .dial-button {
+                width: 22px;
+                height: 22px;
+            }
+
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 5px 10px;
+            }
+
+            .controls {
+                gap: 10px;
+            }
+
+            button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .github-corner svg {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- GitHub Corner -->
+    <a href="https://github.com/Prajwalsrinvas/suitcase-lock-recovery" class="github-corner"
+        aria-label="View source on GitHub">
+        <svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true">
+            <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+            <path
+                d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+                fill="currentColor" class="octo-arm"></path>
+            <path
+                d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+                fill="currentColor" class="octo-body"></path>
+        </svg>
+    </a>
+
+    <div class="theme-toggle" id="themeToggle">
+        <svg class="theme-toggle-icon" id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <span id="theme-text">Dark Mode</span>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Recover Your Forgotten Suitcase Combination</h1>
+            <p>A simple technique that works on most 3-digit combination locks</p>
+        </header>
+
+        <section class="card personal-story-card">
+            <h2>My Experience</h2>
+            <p>Recently while traveling, I was stuck with a locked suitcase and couldn't remember the combination. After
+                searching online, I found a YouTube video (<a href="https://www.youtube.com/watch?v=BxfYMV77fb0"
+                    target="_blank">link here</a>) that showed this technique. It worked perfectly, and I was able to
+                open my suitcase within minutes!</p>
+            <p>I created this page to help others who might face the same issue and need a simple solution without
+                damaging their luggage.</p>
+        </section>
+
+        <section class="card intro-card">
+            <h2>Why This Works</h2>
+            <p>Most suitcase combination locks have wheels with internal "gates" or holes that need to align for the
+                lock to open. By finding where these holes are visible from the back of the lock, you can systematically
+                try a small number of possible combinations instead of all 1000 possibilities.</p>
+        </section>
+
+        <section class="card disclaimer-card">
+            <h3>Important Note</h3>
+            <p>This technique is intended only for recovering access to your own luggage when you've forgotten the
+                combination. Using this method on someone else's property without permission is illegal and unethical.
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>Step-by-Step Recovery Method</h2>
+
+            <ol class="step-list">
+                <li class="step-item">
+                    <h3>Look at the back/underside of the lock</h3>
+                    <p>Turn your suitcase to see the underside of the lock mechanism where the number dials are. You
+                        should be able to see small holes under each dial wheel.</p>
+                </li>
+
+                <li class="step-item">
+                    <h3>Find the internal holes</h3>
+                    <p>Rotate each dial until you can see all three holes aligned in a row from the back/underside. Each
+                        dial will only show its hole at one specific number.</p>
+                </li>
+
+                <li class="step-item">
+                    <h3>Note the numbers showing</h3>
+                    <p>When all three holes are visible from underneath, look at what numbers are displayed on the front
+                        of the lock and write them down. These numbers are your starting point.</p>
+                </li>
+
+                <li class="step-item">
+                    <h3>Try combinations systematically</h3>
+                    <p>Start by trying the combination you noted in step 3. If that doesn't work, rotate <strong>all
+                            three dials</strong> by one click in the same direction (either all +1 or all -1) and try
+                        again.</p>
+                    <p><strong>Example:</strong> If your aligned holes show 764:</p>
+                    <ul style="margin-left: 20px;">
+                        <li>First try 764</li>
+                        <li>Then try 875 (each digit +1)</li>
+                        <li>Then 986, 097, 108, etc.</li>
+                        <li>Or try 653 (each digit -1), then 542, etc.</li>
+                    </ul>
+                    <p>Continue this pattern until the lock opens. One of these combinations will work!</p>
+                </li>
+            </ol>
+        </section>
+
+        <section class="card">
+            <h2>Interactive Demonstration</h2>
+            <p>Use this simulator to practice the technique step by step. You can see both the numbers on the front and
+                the holes underneath the lock.</p>
+
+            <div class="instruction-panel">
+                <div class="current-step" id="currentStep">Step 1: Rotate the dials until holes appear on all three
+                    wheels</div>
+            </div>
+
+            <div class="step-indicator">
+                <div class="step-dot active" id="step1Dot"></div>
+                <div class="step-dot" id="step2Dot"></div>
+                <div class="step-dot" id="step3Dot"></div>
+            </div>
+
+            <div class="view-indicator">
+                The lock displays numbers on top and holes are visible from underneath
+            </div>
+
+            <div class="toggle-input-btn" id="toggleUserInputBtn">
+                ➕ I already know my aligned hole numbers, help me find my combination
+            </div>
+
+            <div class="user-input-panel" id="userInputPanel" style="display:none;">
+                <h3>Enter your aligned hole numbers:</h3>
+                <p>These are the numbers showing on your lock when all three holes are aligned underneath</p>
+                <div class="user-input-container">
+                    <div class="user-input-group">
+                        <div class="custom-number-input">
+                            <div class="custom-number-display" id="customNumber0">0</div>
+                            <div class="custom-number-controls">
+                                <div class="custom-number-button" onclick="changeUserInput(0, 1)">+</div>
+                                <div class="custom-number-button" onclick="changeUserInput(0, -1)">-</div>
+                            </div>
+                        </div>
+                        <div class="custom-number-input">
+                            <div class="custom-number-display" id="customNumber1">0</div>
+                            <div class="custom-number-controls">
+                                <div class="custom-number-button" onclick="changeUserInput(1, 1)">+</div>
+                                <div class="custom-number-button" onclick="changeUserInput(1, -1)">-</div>
+                            </div>
+                        </div>
+                        <div class="custom-number-input">
+                            <div class="custom-number-display" id="customNumber2">0</div>
+                            <div class="custom-number-controls">
+                                <div class="custom-number-button" onclick="changeUserInput(2, 1)">+</div>
+                                <div class="custom-number-button" onclick="changeUserInput(2, -1)">-</div>
+                            </div>
+                        </div>
+                        <button onclick="generateUserCombinations()">Generate Combinations</button>
+                    </div>
+                    <p class="user-input-help">Enter the numbers you see on your real lock when all three holes are
+                        aligned, then click Generate to see all possible combinations to try.</p>
+                </div>
+            </div>
+
+            <!-- Generated combinations for real lock -->
+            <div class="combinations-container" id="generatedCombinations">
+                <div class="combinations-title">Try these combinations on your real lock:</div>
+                <div class="combinations-list" id="combinationsList"></div>
+                <p class="user-input-help" style="margin-top: 15px;">Try each combination in order. One of these will
+                    open your lock.</p>
+            </div>
+
+            <div class="lock-simulator">
+                <!-- Lock Container with front dials and back holes -->
+                <div class="lock-container" id="lock">
+                    <!-- Front Dials -->
+                    <div class="dials-container">
+                        <div class="dial-unit">
+                            <div class="dial-button minus" onclick="rotateDial(0, -1)">−</div>
+                            <div class="dial-inner" id="dialInner0">
+                                <div class="dial-number" id="dialNumber0">0</div>
+                            </div>
+                            <div class="dial-button plus" onclick="rotateDial(0, 1)">+</div>
+                        </div>
+                        <div class="dial-unit">
+                            <div class="dial-button minus" onclick="rotateDial(1, -1)">−</div>
+                            <div class="dial-inner" id="dialInner1">
+                                <div class="dial-number" id="dialNumber1">0</div>
+                            </div>
+                            <div class="dial-button plus" onclick="rotateDial(1, 1)">+</div>
+                        </div>
+                        <div class="dial-unit">
+                            <div class="dial-button minus" onclick="rotateDial(2, -1)">−</div>
+                            <div class="dial-inner" id="dialInner2">
+                                <div class="dial-number" id="dialNumber2">0</div>
+                            </div>
+                            <div class="dial-button plus" onclick="rotateDial(2, 1)">+</div>
+                        </div>
+                    </div>
+
+                    <!-- Back Holes -->
+                    <div class="hole-viewer">
+                        <div class="hole-placeholder">
+                            <div class="hole" id="hole0"></div>
+                        </div>
+                        <div class="hole-placeholder">
+                            <div class="hole" id="hole1"></div>
+                        </div>
+                        <div class="hole-placeholder">
+                            <div class="hole" id="hole2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress tracker (hidden initially) -->
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-header">
+                        <span class="progress-title">Combinations Tried:</span>
+                        <span class="progress-count" id="progressCount">0/10</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>0</span>
+                        <span>10</span>
+                    </div>
+                </div>
+
+                <div class="result-message" id="resultMessage"></div>
+
+                <div class="controls">
+                    <button onclick="tryUnlock()" id="unlockButton" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Try Unlock
+                    </button>
+                    <button onclick="incrementAll(1)" id="incrementButton" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        All +1
+                    </button>
+                    <button onclick="incrementAll(-1)" id="decrementButton" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        All -1
+                    </button>
+                    <button class="secondary" onclick="resetLock()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 2v6h6"></path>
+                            <path d="M3 8L8 3"></path>
+                            <path d="M21 12A9 9 0 0 0 6 5.3L3 8"></path>
+                            <path d="M21 22v-6h-6"></path>
+                            <path d="M21 16l-5 5"></path>
+                            <path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"></path>
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>Created to help travelers recover their forgotten combinations. Use responsibly.</p>
+        <p><a href="https://github.com/Prajwalsrinvas/suitcase-lock-recovery" target="_blank">View project on GitHub</a>
+        </p>
+    </footer>
+
+    <script>
+        // Lock simulator variables
+        let dialValues = [0, 0, 0]; // Current values on the dials
+        let holeNumbers = []; // Numbers at which each dial's hole is visible
+        let correctCombination = []; // The correct combination to unlock
+        let triedCombinations = new Set(); // Track which combinations were tried
+        let startingCombination = null; // The initial combination when holes aligned
+        let allHolesAligned = false; // Track if all holes are currently aligned
+        let touchStartY = null; // For touch events
+        let currentStep = 1; // Track the current step (1-3)
+        let firstAttemptMade = false; // Track if the first unlock attempt has been made
+        let userInputValues = [0, 0, 0]; // Values from manual number input
+        let combinations = []; // Store generated combinations
+
+        // DOM Elements
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        const toggleUserInputBtn = document.getElementById('toggleUserInputBtn');
+        const userInputPanel = document.getElementById('userInputPanel');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressCount = document.getElementById('progressCount');
+        const unlockButton = document.getElementById('unlockButton');
+        const incrementButton = document.getElementById('incrementButton');
+        const decrementButton = document.getElementById('decrementButton');
+        const currentStepElement = document.getElementById('currentStep');
+        const resultMessage = document.getElementById('resultMessage');
+        const step1Dot = document.getElementById('step1Dot');
+        const step2Dot = document.getElementById('step2Dot');
+        const step3Dot = document.getElementById('step3Dot');
+        const generatedCombinations = document.getElementById('generatedCombinations');
+        const combinationsList = document.getElementById('combinationsList');
+
+        const dialInners = [
+            document.getElementById('dialInner0'),
+            document.getElementById('dialInner1'),
+            document.getElementById('dialInner2')
+        ];
+
+        // Toggle between light and dark theme
+        function toggleTheme() {
+            const darkMode = document.body.getAttribute('data-theme') !== 'dark';
+            document.body.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+
+            // Update toggle button icon and text
+            if (darkMode) {
+                themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+                themeText.textContent = 'Light Mode';
+            } else {
+                themeIcon.innerHTML = `<circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+                themeText.textContent = 'Dark Mode';
+            }
+        }
+
+        // Toggle user input panel
+        function toggleUserInputPanel() {
+            const isVisible = userInputPanel.style.display === 'block';
+            userInputPanel.style.display = isVisible ? 'none' : 'block';
+            toggleUserInputBtn.textContent = isVisible ?
+                '➕ I already know my aligned hole numbers, help me find my combination' :
+                '➖ Hide manual number input';
+
+            // Hide generated combinations when hiding input panel
+            if (isVisible) {
+                generatedCombinations.style.display = 'none';
+            }
+        }
+
+        // Change user input value with proper wrapping (0-9)
+        function changeUserInput(index, direction) {
+            // Update the value with proper wrapping (0-9)
+            userInputValues[index] = (userInputValues[index] + direction + 10) % 10;
+
+            // Update display
+            document.getElementById(`customNumber${index}`).textContent = userInputValues[index];
+        }
+
+        // Update the current step indicator
+        function updateStepIndicator() {
+            // Reset all dots
+            step1Dot.classList.remove('active');
+            step2Dot.classList.remove('active');
+            step3Dot.classList.remove('active');
+
+            // Set the active dot
+            if (currentStep === 1) {
+                step1Dot.classList.add('active');
+                currentStepElement.textContent = 'Step 1: Rotate the dials until holes appear on all three wheels';
+            } else if (currentStep === 2) {
+                step2Dot.classList.add('active');
+                currentStepElement.textContent = 'Step 2: Try unlocking with the current combination shown on the dials';
+            } else if (currentStep === 3) {
+                step3Dot.classList.add('active');
+                currentStepElement.textContent = 'Step 3: Try different combinations by incrementing or decrementing all numbers';
+            }
+        }
+
+        // Initialize the lock
+        function initLock() {
+            // Generate random hole numbers (0-9 for each dial)
+            // These are the numbers when each dial's hole will be visible
+            holeNumbers = Array(3).fill().map(() => Math.floor(Math.random() * 10));
+
+            // Generate random correct combination (0-9 for each digit)
+            // This will be a fixed offset (1-9) away from the hole numbers
+            const offset = 1 + Math.floor(Math.random() * 9); // Offset 1-9 from hole alignment
+            correctCombination = holeNumbers.map(num => (num + offset) % 10);
+
+            // Reset other variables
+            dialValues = [0, 0, 0];
+            userInputValues = [0, 0, 0];
+            allHolesAligned = false;
+            triedCombinations.clear();
+            startingCombination = null;
+            currentStep = 1;
+            firstAttemptMade = false;
+            combinations = [];
+
+            // Reset UI elements
+            progressContainer.style.display = 'none';
+            generatedCombinations.style.display = 'none';
+            progressFill.style.width = '0%';
+            progressCount.textContent = '0/10';
+            unlockButton.disabled = true;
+            incrementButton.disabled = true;
+            decrementButton.disabled = true;
+
+            // Reset custom number inputs
+            for (let i = 0; i < 3; i++) {
+                document.getElementById(`customNumber${i}`).textContent = '0';
+            }
+
+            // Clear result message
+            resultMessage.textContent = '';
+            resultMessage.className = 'result-message';
+
+            // Update step indicator
+            updateStepIndicator();
+
+            // Update UI
+            updateLockDisplay();
+
+            // Setup touch events
+            setupTouchEvents();
+
+            console.log("Hole Numbers:", holeNumbers);
+            console.log("Correct Combination:", correctCombination);
+        }
+
+        // Update the visual display of the lock
+        function updateLockDisplay() {
+            // Update dial numbers
+            for (let i = 0; i < 3; i++) {
+                document.getElementById(`dialNumber${i}`).textContent = dialValues[i];
+            }
+
+            // Update hole alignments
+            updateHoleAlignments();
+        }
+
+        // Update which holes are aligned - each dial shows a hole only at one specific number
+        function updateHoleAlignments() {
+            let alignedCount = 0;
+
+            for (let i = 0; i < 3; i++) {
+                // A hole is visible when the dial value matches the hole number for that dial
+                const isAligned = dialValues[i] === holeNumbers[i];
+                document.getElementById(`hole${i}`).classList.toggle('visible', isAligned);
+
+                if (isAligned) alignedCount++;
+            }
+
+            // Check if all holes are aligned
+            const newAllHolesAligned = alignedCount === 3;
+
+            // If alignment status changed to all aligned, update UI but don't show progress yet
+            if (newAllHolesAligned && !allHolesAligned) {
+                allHolesAligned = true;
+                startingCombination = [...dialValues]; // Save the starting combination
+
+                // Enable unlock button but keep increment/decrement buttons disabled for now
+                unlockButton.disabled = false;
+
+                // Move to step 2
+                currentStep = 2;
+                updateStepIndicator();
+
+                // Update instruction
+                resultMessage.textContent = 'All holes aligned! Now try unlocking with the displayed numbers.';
+
+            } else if (!newAllHolesAligned && allHolesAligned) {
+                // Holes are no longer aligned
+                allHolesAligned = false;
+
+                // If we've already made the first attempt, stay in step 3
+                // Otherwise go back to step 1
+                if (!firstAttemptMade) {
+                    currentStep = 1;
+                    unlockButton.disabled = true;
+                    incrementButton.disabled = true;
+                    decrementButton.disabled = true;
+                }
+
+                updateStepIndicator();
+            }
+        }
+
+        // Increment all dials by a specified amount
+        function incrementAll(direction) {
+            // Only allow incrementing all if we're in step 3
+            if (currentStep < 3) {
+                resultMessage.textContent = 'First align all holes and try the initial combination.';
+                return;
+            }
+
+            // +1 or -1 for all dials
+            for (let i = 0; i < 3; i++) {
+                rotateDial(i, direction);
+            }
+
+            // When incrementing all, try to unlock automatically
+            // The tryUnlock function will handle progress tracking
+            setTimeout(() => {
+                tryUnlock();
+            }, 300);
+        }
+
+        // Setup touch events for mobile
+        function setupTouchEvents() {
+            // Setup touch events for mobile swipe
+            dialInners.forEach((dial, idx) => {
+                dial.addEventListener('touchstart', (e) => {
+                    touchStartY = e.touches[0].clientY;
+                    e.preventDefault();
+                }, { passive: false });
+
+                dial.addEventListener('touchmove', (e) => {
+                    if (touchStartY === null) return;
+
+                    const touchY = e.touches[0].clientY;
+                    const deltaY = touchY - touchStartY;
+
+                    // If moved enough to trigger a dial change
+                    if (Math.abs(deltaY) > 10) {
+                        // Moving finger down = increment, up = decrement
+                        const direction = deltaY > 0 ? 1 : -1;
+                        rotateDial(idx, direction);
+
+                        // Reset starting position for continuous movement
+                        touchStartY = touchY;
+                    }
+
+                    e.preventDefault();
+                }, { passive: false });
+
+                dial.addEventListener('touchend', () => {
+                    touchStartY = null;
+                });
+
+                // Also add click/tap handler for easier mobile use
+                dial.addEventListener('click', () => {
+                    rotateDial(idx, 1); // Default increment on tap
+                });
+            });
+        }
+
+        // Rotate a dial left or right with animation
+        function rotateDial(dialIndex, direction) {
+            // Get the number element
+            const numberElement = document.getElementById(`dialNumber${dialIndex}`);
+
+            // Add animation class
+            numberElement.classList.add('changing');
+
+            // Remove the class after animation is done
+            setTimeout(() => {
+                numberElement.classList.remove('changing');
+            }, 200);
+
+            // Left = decrement (direction -1), Right = increment (direction 1)
+            // Update the dial value (0-9)
+            dialValues[dialIndex] = (dialValues[dialIndex] + direction + 10) % 10;
+
+            // Update the UI
+            updateLockDisplay();
+        }
+
+        // Update progress tracking for tried combinations
+        function updateProgressTracking() {
+            // Always add current combination to tried combinations
+            const currentCombo = dialValues.join('');
+            triedCombinations.add(currentCombo);
+
+            // Only update UI elements if in step 3
+            if (currentStep < 3) return;
+
+            // Calculate progress (max 10 combinations)
+            const totalCombos = 10; // There are 10 possible combinations
+            const progress = triedCombinations.size;
+            const progressPercentage = (progress / totalCombos) * 100;
+
+            // Make sure progress container is visible
+            progressContainer.style.display = 'block';
+
+            // Update progress bar
+            progressFill.style.width = `${progressPercentage}%`;
+            progressCount.textContent = `${progress}/${totalCombos}`;
+        }
+
+        // Generate combinations based on user input for real lock
+        function generateUserCombinations() {
+            // Clear any existing combinations
+            combinationsList.innerHTML = '';
+            combinations = [];
+
+            // Generate all 10 possible combinations
+
+            // First try the aligned hole numbers
+            combinations.push([...userInputValues]);
+
+            // Then try all increments (+1 through +9)
+            let current = [...userInputValues];
+            for (let i = 1; i < 10; i++) {
+                current = current.map(num => (num + 1) % 10);
+                combinations.push([...current]);
+            }
+
+            // Create the combinations list UI
+            combinations.forEach((combo, index) => {
+                const comboString = combo.join('');
+                const item = document.createElement('div');
+                item.className = 'combination-item';
+                item.id = `combo-${index}`;
+                item.textContent = comboString;
+                combinationsList.appendChild(item);
+            });
+
+            // Show the combinations container
+            generatedCombinations.style.display = 'block';
+
+            // Set up the simulation as well
+            dialValues = [...userInputValues];
+            updateLockDisplay();
+
+            // Setup hole numbers to match user input
+            holeNumbers = [...userInputValues];
+            startingCombination = [...userInputValues];
+            allHolesAligned = true;
+
+            // Set step to 2 (trying the combination)
+            currentStep = 2;
+            updateStepIndicator();
+            firstAttemptMade = false;
+
+            // Enable unlock button
+            unlockButton.disabled = false;
+
+            // Hide progress container initially
+            progressContainer.style.display = 'none';
+
+            // Reset tried combinations
+            triedCombinations.clear();
+
+            // Generate a random correct combination (1-9 away)
+            const offset = 1 + Math.floor(Math.random() * 9);
+            correctCombination = userInputValues.map(num => (num + offset) % 10);
+
+            // Show feedback
+            resultMessage.textContent = 'Combinations generated! Try them on your real lock in order until one works.';
+
+            console.log("User Input Hole Numbers:", userInputValues);
+            console.log("Generated Correct Combination:", correctCombination);
+        }
+
+        // Try to unlock with current combination
+        function tryUnlock() {
+            const lockElement = document.getElementById('lock');
+
+            // Track this attempt and update progress display
+            updateProgressTracking();
+
+            // Check if combination is correct
+            const isCorrect = dialValues.every((val, i) => val === correctCombination[i]);
+
+            if (isCorrect) {
+                // Success animation and message
+                lockElement.classList.remove('unlocking');
+                lockElement.classList.add('unlocked');
+
+                setTimeout(() => {
+                    lockElement.classList.remove('unlocked');
+                }, 500);
+
+                resultMessage.textContent = 'Success! 🎉 The lock is open! This is your combination.';
+                resultMessage.className = 'result-message success';
+
+                // Make sure progress container is visible
+                progressContainer.style.display = 'block';
+
+                // Mark this combination as correct in the progress bar
+                progressFill.style.backgroundColor = 'var(--success-color)';
+
+                // If we have a generated combinations list, mark the correct one
+                if (generatedCombinations.style.display === 'block') {
+                    // Find the index of the correct combination
+                    const correctIndex = combinations.findIndex(combo =>
+                        combo.every((num, i) => num === correctCombination[i])
+                    );
+
+                    if (correctIndex >= 0) {
+                        const comboElement = document.getElementById(`combo-${correctIndex}`);
+                        if (comboElement) {
+                            comboElement.classList.add('correct');
+                        }
+                    }
+                }
+
+            } else {
+                // Failed attempt animation
+                lockElement.classList.remove('unlocked');
+                lockElement.classList.add('unlocking');
+
+                setTimeout(() => {
+                    lockElement.classList.remove('unlocking');
+                }, 600);
+
+                // If this is the first attempt after aligning holes
+                if (!firstAttemptMade && currentStep === 2) {
+                    firstAttemptMade = true;
+
+                    // Move to step 3
+                    currentStep = 3;
+                    updateStepIndicator();
+
+                    // Enable increment/decrement buttons
+                    incrementButton.disabled = false;
+                    decrementButton.disabled = false;
+
+                    // Show progress container now
+                    progressContainer.style.display = 'block';
+
+                    // Update message
+                    resultMessage.textContent = 'Incorrect. Try incrementing all numbers by 1 with the "All +1" button.';
+                } else {
+                    // Regular incorrect message
+                    resultMessage.textContent = 'Incorrect combination. Continue trying with "All +1" or "All -1" buttons.';
+                }
+                resultMessage.className = 'result-message';
+            }
+        }
+
+        // Reset the lock simulator
+        function resetLock() {
+            // Reset dial values with animation
+            for (let i = 0; i < 3; i++) {
+                const numberElement = document.getElementById(`dialNumber${i}`);
+                numberElement.classList.add('changing');
+                setTimeout(() => {
+                    numberElement.classList.remove('changing');
+                }, 200);
+            }
+
+            dialValues = [0, 0, 0];
+            userInputValues = [0, 0, 0];
+
+            // Reset custom number inputs
+            for (let i = 0; i < 3; i++) {
+                document.getElementById(`customNumber${i}`).textContent = '0';
+            }
+
+            // Generate new random values
+            holeNumbers = Array(3).fill().map(() => Math.floor(Math.random() * 10));
+            const offset = 1 + Math.floor(Math.random() * 9);
+            correctCombination = holeNumbers.map(num => (num + offset) % 10);
+
+            // Reset other variables
+            allHolesAligned = false;
+            triedCombinations.clear();
+            startingCombination = null;
+            currentStep = 1;
+            firstAttemptMade = false;
+            combinations = [];
+
+            // Reset UI elements
+            progressContainer.style.display = 'none';
+            generatedCombinations.style.display = 'none';
+            progressFill.style.width = '0%';
+            progressFill.style.backgroundColor = 'var(--progress-fill)';
+            progressCount.textContent = '0/10';
+            unlockButton.disabled = true;
+            incrementButton.disabled = true;
+            decrementButton.disabled = true;
+
+            // Clear result message
+            resultMessage.textContent = '';
+            resultMessage.className = 'result-message';
+
+            // Update step indicator
+            updateStepIndicator();
+
+            // Update UI
+            updateLockDisplay();
+
+            console.log("Reset - New Hole Numbers:", holeNumbers);
+            console.log("Reset - New Correct Combination:", correctCombination);
+        }
+
+        // Initialize event listeners
+        function initEventListeners() {
+            // Theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
+
+            // Toggle user input panel
+            toggleUserInputBtn.addEventListener('click', toggleUserInputPanel);
+        }
+
+        // Initialize everything on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            initLock();
+            initEventListeners();
+
+            // Check user preference for dark mode
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                toggleTheme();
+            }
+        });
+    </script>
+</body>
+
+</html>
