@@ -2,9 +2,10 @@
 
 A web-based interactive simulation that helps travelers recover forgotten combinations for 3-digit suitcase locks.
 
-![Suitcase Lock Recovery Tool](demo.png)
+![1](screenshots/1.png)
+![1](screenshots/2.png)
 
-## [🔗 Live Demo](https://prajwalsrinvas.github.io/suitcase-lock-recovery/)
+## [🔗 Live Demo](https://voyagevault.vercel.app/)
 
 ## Purpose
 
